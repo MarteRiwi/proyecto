@@ -15,7 +15,7 @@
 ## excpetion
 ### Manejo de errores
 
-
+```text
 sigp/
  ├── src/
  │   └── com/sigp/
@@ -29,3 +29,4 @@ sigp/
  ├── docs/
  ├── diagrams/
  └── README.md
+```
