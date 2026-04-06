@@ -1,11 +1,11 @@
 package com.sigp;
 
-import com.sigp.controller.ControllerExample;
+import com.sigp.controller.DoctorController;
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("Proyecto SIGP iniciado");
-        ControllerExample controller = new ControllerExample();
+        DoctorController controller = new DoctorController();
         controller.run();
     }
 }
