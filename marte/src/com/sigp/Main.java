@@ -38,7 +38,7 @@ public class Main {
 
                 switch (choice) {
                     case 1 -> {
-                        System.out.print("Usuario: ");
+                        System.out.print("Email: ");
                         String userStr = scanner.nextLine();
                         System.out.print("Contraseña: ");
                         String passStr = scanner.nextLine();
@@ -52,7 +52,7 @@ public class Main {
                         }
                     }
                     case 2 -> {
-                        System.out.print("Nuevo usuario: ");
+                        System.out.print("Email: ");
                         String username = scanner.nextLine();
                         System.out.print("Nueva contraseña: ");
                         String password = scanner.nextLine();

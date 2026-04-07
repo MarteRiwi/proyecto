@@ -13,9 +13,9 @@ import com.sigp.repository.UserRepository;
 public class LoginService {
 
     /** Verifica credenciales contra la base de datos de usuarios. */
-    public boolean authenticate(String username, String password) {
+    public boolean authenticate(String email, String password) {
         for (User u : UserRepository.getUserDatabase()) {
-            if (u.username().equals(username) && u.password().equals(password)) {
+            if (u.username().equalsIgnoreCase(email) && u.password().equals(password)) {
                 return true;
             }
         }
@@ -24,29 +24,29 @@ public class LoginService {
 
     /**
      * Registra un nuevo usuario en el sistema.
-     * Valida que el nombre no exista previamente y que cumpla las reglas del record User.
+     * Valida que el email no exista previamente y que cumpla las reglas del record User.
      */
-    public void registerUser(String username, String password) {
-        if (username == null || username.trim().isEmpty()) {
-            System.out.println("El usuario no puede estar vacío.");
+    public void registerUser(String email, String password) {
+        if (email == null || email.trim().isEmpty()) {
+            System.out.println("El email no puede estar vacío.");
             return;
         }
         // Verificar si ya existe
-        if (UserRepository.findByUsername(username) != null) {
-            System.out.println("El usuario '" + username + "' ya existe. Elige otro nombre.");
+        if (UserRepository.findByEmail(email) != null) {
+            System.out.println("El email '" + email + "' ya está registrado. Usa otro.");
             return;
         }
         try {
-            UserRepository.addUser(new User(username, password));
-            System.out.println("Usuario '" + username + "' registrado exitosamente.");
+            UserRepository.addUser(new User(email, password));
+            System.out.println("Usuario con email '" + email + "' registrado exitosamente.");
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
     /** Determina si el usuario tiene rol de administrador. */
-    public boolean isAdmin(String username) {
-        return username.toLowerCase().contains("admin");
+    public boolean isAdmin(String email) {
+        return "admin".equalsIgnoreCase(email) || email.toLowerCase().contains("admin");
     }
 
     /**

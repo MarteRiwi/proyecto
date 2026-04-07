@@ -29,8 +29,8 @@ public class UserRepository {
         return userDatabase;
     }
 
-    /** Busca un usuario por nombre (sin distinguir mayúsculas). */
-    public static User findByUsername(String username) {
+    /** Busca un usuario por email (sin distinguir mayúsculas). */
+    public static User findByEmail(String username) {
         for (User u : userDatabase) {
             if (u.username().equalsIgnoreCase(username)) {
                 return u;

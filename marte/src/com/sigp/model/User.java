@@ -8,11 +8,12 @@ public record User(String username, String password) {
 
     public User {
         if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("El usuario no puede estar vacío.");
+            throw new IllegalArgumentException("El email no puede estar vacío.");
         }
-        if (!username.matches("^[a-zA-Z0-9._]{4,20}$")) {
+        boolean isAdminUser = "admin".equalsIgnoreCase(username);
+        if (!isAdminUser && !username.matches("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$")) {
             throw new IllegalArgumentException(
-                "Usuario inválido. Solo letras, números, punto o guion bajo. Entre 4 y 20 caracteres.");
+                "Email inválido. Formato esperado: usuario@dominio.com");
         }
         if (password == null || password.isEmpty()) {
             throw new IllegalArgumentException("La contraseña no puede estar vacía.");

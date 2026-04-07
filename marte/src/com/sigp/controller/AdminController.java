@@ -90,7 +90,7 @@ public class AdminController {
     // ── Gestión de usuarios ────────────────────────────────────────────────────
 
     private void registrarNuevoUsuario() {
-        System.out.print("Nuevo nombre de usuario: ");
+        System.out.print("Email del nuevo usuario: ");
         String username = scanner.nextLine();
         System.out.print("Contraseña: ");
         String password = scanner.nextLine();

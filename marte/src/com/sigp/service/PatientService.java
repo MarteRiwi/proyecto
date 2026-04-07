@@ -2,7 +2,6 @@ package com.sigp.service;
 
 import com.sigp.model.Patient;
 import com.sigp.repository.PatientRepository;
-
 import java.util.Scanner;
 
 /**
@@ -16,22 +15,23 @@ public class PatientService {
     /**
      * Solicita los datos del paciente por consola y lo registra en el sistema.
      *
-     * @param loginName nombre de usuario con el que inició sesión
+     * @param loginEmail email con el que inició sesión
      */
-    public void registrarInformacionPaciente(String loginName) {
+    public void registrarInformacionPaciente(String loginEmail) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("\n--- REGISTRO DE PACIENTE: " + loginName.toUpperCase() + " ---");
+        System.out.println("\n--- REGISTRO DE PACIENTE: " + loginEmail.toUpperCase() + " ---");
 
         try {
+            System.out.print("Nombre completo: ");
+            String name = sc.nextLine();
+
+            
             System.out.print("Nacionalidad: ");
             String nationality = sc.nextLine();
 
             System.out.print("Teléfono celular (ej: 3001234567): ");
             String phone = sc.nextLine();
-
-            System.out.print("Email: ");
-            String email = sc.nextLine();
 
             System.out.print("Edad: ");
             int age = Integer.parseInt(sc.nextLine().trim());
@@ -39,7 +39,7 @@ public class PatientService {
             System.out.print("Número de cédula: ");
             String id = sc.nextLine();
 
-            guardarPaciente(loginName, nationality, phone, email, age, id);
+            guardarPaciente(name, nationality, phone, loginEmail, age, id);
 
         } catch (NumberFormatException e) {
             System.out.println("Error: ingresa un número válido para la edad.");
