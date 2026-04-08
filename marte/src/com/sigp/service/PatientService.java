@@ -1,7 +1,9 @@
 package com.sigp.service;
 
+import com.sigp.model.Appointment;
 import com.sigp.model.Patient;
 import com.sigp.repository.PatientRepository;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Scanner;
  * Basado en el proyecto de Esteban (serviceAsignacionPatient).
  */
 public class PatientService {
+
+    private final AppointmentService appointmentService = new AppointmentService();
 
     /**
      * Solicita los datos del paciente por consola y lo registra en el sistema.
@@ -111,7 +115,7 @@ public class PatientService {
         }
     }
 
-    /** Menú de gestión de citas médicas (módulo en desarrollo). */
+    /** Menú de gestión de citas médicas del paciente. */
     private void mostrarMenuCitas(String name) {
         Scanner sc = new Scanner(System.in);
         boolean inMenu = true;
@@ -127,9 +131,9 @@ public class PatientService {
             try {
                 int opt = Integer.parseInt(sc.nextLine().trim());
                 switch (opt) {
-                    case 1 -> System.out.println("Módulo 'Agendar cita' en desarrollo.");
-                    case 2 -> System.out.println("Módulo 'Ver citas' en desarrollo.");
-                    case 3 -> System.out.println("Módulo 'Cancelar cita' en desarrollo.");
+                    case 1 -> agendarCita(name, sc);
+                    case 2 -> verMisCitas(name);
+                    case 3 -> cancelarCita(name, sc);
                     case 4 -> {
                         System.out.println("Saliendo. ¡Hasta pronto, " + name + "!");
                         inMenu = false;
@@ -140,6 +144,62 @@ public class PatientService {
             } catch (NumberFormatException e) {
                 System.out.println("Por favor ingresa un número válido.");
             }
+        }
+    }
+
+    private void agendarCita(String patientName, Scanner sc) {
+        try {
+            System.out.print("Nombre del doctor: ");
+            String doctorName = sc.nextLine();
+            System.out.print("Fecha y hora (ej: 2026-04-10 09:00): ");
+            String dateTime = sc.nextLine();
+            System.out.print("Motivo de la cita: ");
+            String reason = sc.nextLine();
+
+            Appointment appointment = appointmentService.agendarCita(patientName, doctorName, dateTime, reason);
+            System.out.println("Cita agendada correctamente con ID " + appointment.id() + ".");
+        } catch (IllegalArgumentException e) {
+            System.out.println("No fue posible agendar la cita: " + e.getMessage());
+        }
+    }
+
+    private void verMisCitas(String patientName) {
+        try {
+            List<Appointment> appointments = appointmentService.obtenerCitasPaciente(patientName);
+            System.out.println("\n--- MIS CITAS ---");
+            if (appointments.isEmpty()) {
+                System.out.println("No tienes citas registradas.");
+                return;
+            }
+            for (Appointment appointment : appointments) {
+                System.out.println(
+                    "ID: " + appointment.id()
+                    + " | Doctor: " + appointment.doctorName()
+                    + " | Fecha/Hora: " + appointment.dateTime()
+                    + " | Motivo: " + appointment.reason()
+                );
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("No fue posible consultar las citas: " + e.getMessage());
+        }
+    }
+
+    private void cancelarCita(String patientName, Scanner sc) {
+        System.out.print("ID de la cita a cancelar: ");
+        String idStr = sc.nextLine().trim();
+
+        try {
+            int appointmentId = Integer.parseInt(idStr);
+            boolean deleted = appointmentService.cancelarCita(patientName, appointmentId);
+            if (deleted) {
+                System.out.println("Cita cancelada correctamente.");
+            } else {
+                System.out.println("No se encontró una cita con ese ID para tu usuario.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Debes ingresar un ID numérico válido.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("No fue posible cancelar la cita: " + e.getMessage());
         }
     }
 }
