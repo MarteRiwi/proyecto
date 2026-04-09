@@ -43,8 +43,8 @@ public class Main {
                         System.out.print("Contraseña: ");
                         String passStr = scanner.nextLine();
 
-                        if (loginService.authenticate(userStr, passStr)) {
-                            User loggedUser = new User(userStr, passStr);
+                        User loggedUser = loginService.authenticate(userStr, passStr);
+                        if (loggedUser != null) {
                             System.out.println("\nAcceso concedido.");
                             loginService.handleLoginSuccess(loggedUser);
                         } else {

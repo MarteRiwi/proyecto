@@ -3,7 +3,6 @@ package com.sigp.controller;
 import com.sigp.model.User;
 import com.sigp.repository.PatientRepository;
 import com.sigp.service.LoginService;
-
 import java.util.Scanner;
 
 /**
@@ -94,8 +93,19 @@ public class AdminController {
         String username = scanner.nextLine();
         System.out.print("Contraseña: ");
         String password = scanner.nextLine();
+        System.out.println("Rol del usuario:\n1. PACIENTE\n2. DOCTOR\n3. ADMIN");
+        System.out.print("Selecciona el rol: ");
+
+        String role = "PATIENT";
+        String option = scanner.nextLine().trim();
+        switch (option) {
+            case "1" -> role = "PATIENT";
+            case "2" -> role = "DOCTOR";
+            case "3" -> role = "ADMIN";
+            default -> System.out.println("Rol no válido. Se registrará como PATIENT por defecto.");
+        }
 
         LoginService loginService = new LoginService();
-        loginService.registerUser(username, password);
+        loginService.registerUser(username, password, role);
     }
 }

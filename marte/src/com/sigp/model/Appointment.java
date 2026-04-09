@@ -105,6 +105,20 @@ public class Appointment {
         }
         this.status = status;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static void setNextId(int nextId) {
+        if (nextId > Appointment.nextId) {
+            Appointment.nextId = nextId;
+        }
+    }
+
+    public static int getNextId() {
+        return nextId;
+    }
     
     public double getCost() {
         return cost;
@@ -127,11 +141,11 @@ public class Appointment {
     
     /**
      * Marca la cita como completada, registrando el costo.
-     * Solo se puede completar si está en estado EN_PROGRESO.
+     * Solo se puede completar si está en estado EN_PROGRESO o PENDIENTE.
      */
     public void completar(double cost, String notes) {
-        if (!this.status.equals("EN_PROGRESO")) {
-            throw new IllegalStateException("Solo se pueden completar citas que están EN_PROGRESO.");
+        if (!this.status.equals("EN_PROGRESO") && !this.status.equals("PENDIENTE")) {
+            throw new IllegalStateException("Solo se pueden completar citas que están EN_PROGRESO o PENDIENTE.");
         }
         this.cost = cost;
         this.notes = notes != null ? notes : "";

@@ -225,29 +225,34 @@ public class AppointmentService {
         System.out.println("COMPLETAR CITA");
         System.out.println("════════════════════════════════════════════════════════");
 
-        // Mostrar citas en progreso del doctor
-        List<Appointment> citasEnProgreso = AppointmentRepository
-                .findByDoctorAndStatus(doctorId, "EN_PROGRESO");
+        List<Appointment> citasDisponibles = AppointmentRepository
+                .getAllAppointments().stream()
+                .filter(apt -> apt.getDoctorId() == doctorId &&
+                        (apt.getStatus().equals("PENDIENTE") || apt.getStatus().equals("EN_PROGRESO")))
+                .toList();
 
-        if (citasEnProgreso.isEmpty()) {
-            System.out.println("No tienes citas en progreso.");
+        if (citasDisponibles.isEmpty()) {
+            System.out.println("No tienes citas pendientes o en progreso para completar.");
             return;
         }
 
-        System.out.println("\nCitas en progreso:\n");
-        for (int i = 0; i < citasEnProgreso.size(); i++) {
-            System.out.println((i + 1) + ". " + citasEnProgreso.get(i));
+        System.out.println("\nCitas disponibles para completar:\n");
+        for (int i = 0; i < citasDisponibles.size(); i++) {
+            System.out.println((i + 1) + ". " + citasDisponibles.get(i));
         }
 
         System.out.print("\nSelecciona el número de la cita a completar: ");
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice < 1 || choice > citasEnProgreso.size()) {
+            if (choice < 1 || choice > citasDisponibles.size()) {
                 System.out.println("Selección inválida.");
                 return;
             }
 
-            Appointment appointmentToComplete = citasEnProgreso.get(choice - 1);
+            Appointment appointmentToComplete = citasDisponibles.get(choice - 1);
+            if (appointmentToComplete.getStatus().equals("PENDIENTE")) {
+                System.out.println("La cita está pendiente. Se completará directamente.");
+            }
 
             System.out.print("Costo de la cita ($): ");
             double cost = Double.parseDouble(scanner.nextLine().trim());

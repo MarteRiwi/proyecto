@@ -1,0 +1,3 @@
+admin|admin123|ADMIN
+juan@gmail.com|1234|PATIENT
+prueba@gmail.com|1234|DOCTOR

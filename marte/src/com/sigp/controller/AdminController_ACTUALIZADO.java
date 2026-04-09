@@ -19,12 +19,12 @@ import java.util.Scanner;
  *
  * Basado en el controllerAdmin original con integración de citas.
  */
-public class AdminController {
+public class AdminController_ACTUALIZADO {
 
     private final Scanner scanner = new Scanner(System.in);
     private final DoctorRepository doctorRepository;
 
-    public AdminController() {
+    public AdminController_ACTUALIZADO() {
         this.doctorRepository = new DoctorRepository();
     }
 

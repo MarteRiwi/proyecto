@@ -1,10 +1,10 @@
 package com.sigp.model;
 
 /**
- * Modelo de usuario del sistema (admin o paciente).
+ * Modelo de usuario del sistema (admin, doctor o paciente).
  * Usa record de Java para inmutabilidad y validaciones en el constructor compacto.
  */
-public record User(String username, String password) {
+public record User(String username, String password, String role) {
 
     public User {
         if (username == null || username.trim().isEmpty()) {
@@ -24,5 +24,13 @@ public record User(String username, String password) {
         if (!password.matches(".*[0-9].*")) {
             throw new IllegalArgumentException("La contraseña debe contener al menos un número.");
         }
+        if (role == null || role.trim().isEmpty()) {
+            throw new IllegalArgumentException("El rol del usuario no puede estar vacío.");
+        }
+        String normalizedRole = role.trim().toUpperCase();
+        if (!normalizedRole.equals("ADMIN") && !normalizedRole.equals("DOCTOR") && !normalizedRole.equals("PATIENT")) {
+            throw new IllegalArgumentException("Rol inválido. Debe ser ADMIN, DOCTOR o PATIENT.");
+        }
+        role = normalizedRole;
     }
 }
