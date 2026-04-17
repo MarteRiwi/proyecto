@@ -18,7 +18,15 @@ import java.util.Scanner;
  */
 public class AdminController {
 
+<<<<<<< HEAD
     private final Scanner scanner = new Scanner(System.in);
+=======
+    private final Scanner scanner;
+
+    public AdminController(Scanner scanner) {
+        this.scanner = scanner;
+    }
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
 
     /** Muestra el menú principal del administrador y ejecuta las opciones. */
     public void showAdminMenu(User admin) {
@@ -40,7 +48,11 @@ public class AdminController {
                 switch (option) {
                     case 1 -> {
                         // Delega completamente en DoctorController (proyecto Stiven)
+<<<<<<< HEAD
                         DoctorController doctorController = new DoctorController();
+=======
+                        DoctorController doctorController = new DoctorController(scanner);
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                         doctorController.mostrarMenuDoctores();
                     }
                     case 2 -> listarPacientes();

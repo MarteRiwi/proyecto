@@ -1,3 +1,13 @@
 {
+<<<<<<< HEAD
     "java.debug.settings.onBuildFailureProceed": true
 }
+=======
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.project.sourcePaths": [
+        "marte/src",
+        "."
+    ],
+    "java.project.outputPath": "marte/out"
+}
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)

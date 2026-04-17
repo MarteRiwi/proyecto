@@ -20,7 +20,11 @@ import java.util.Map;
  */
 public class PersistenceManager {
 
+<<<<<<< HEAD
     private static final String DATA_DIR = "data";
+=======
+    private static final String DATA_DIR = resolveDataDirectory();
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     private static final String DOCTORS_FILE = DATA_DIR + "/doctores.txt";
     private static final String USERS_FILE = DATA_DIR + "/usuarios.txt";
     private static final String PATIENTS_FILE = DATA_DIR + "/pacientes.txt";
@@ -37,6 +41,19 @@ public class PersistenceManager {
         }
     }
 
+<<<<<<< HEAD
+=======
+    private static String resolveDataDirectory() {
+        String[] candidates = {"data", "../data"};
+        for (String candidate : candidates) {
+            if (Files.exists(Paths.get(candidate))) {
+                return candidate;
+            }
+        }
+        return "data";
+    }
+
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     // ── Doctores ─────────────────────────────────────────────────────────────────
 
     public static void guardarDoctores(List<Doctor> doctores, int siguienteId) {

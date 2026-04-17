@@ -17,9 +17,15 @@ public class DoctorController {
     private final DoctorService service;
     private final Scanner scanner;
 
+<<<<<<< HEAD
     public DoctorController() {
         this.service = new DoctorService();
         this.scanner = new Scanner(System.in);
+=======
+    public DoctorController(Scanner scanner) {
+        this.service = new DoctorService();
+        this.scanner = scanner;
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     }
 
     /** Muestra el submenú de gestión de doctores dentro del panel admin. */
@@ -121,4 +127,8 @@ public class DoctorController {
             }
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)

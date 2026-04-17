@@ -1,3 +1,7 @@
 1
+<<<<<<< HEAD
 1|Juan Vargas |10376612|1|Stiven|Pediatria|13/11/2027 13:00|PENDIENTE|0.0|
 1
+=======
+1|Carlos MArio|1244213|7|Santiago Meza|Gastroenterología|12/11/2026 16:00|PENDIENTE|0.0|
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)

@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "marte.src.com.sigp.Main",
+            "projectName": "proyecto-sebas_122b375"
+        },
+        {
+            "type": "java",
+            "name": "SIGP Marte",
+            "request": "launch",
+            "mainClass": "com.sigp.Main",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "java",
+            "name": "Hola Launcher",
+            "request": "launch",
+            "mainClass": "Hola",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

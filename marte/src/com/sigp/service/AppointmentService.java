@@ -20,9 +20,15 @@ public class AppointmentService {
     private DoctorRepository doctorRepository;
     private Scanner scanner;
 
+<<<<<<< HEAD
     public AppointmentService() {
         this.doctorRepository = new DoctorRepository();
         this.scanner = new Scanner(System.in);
+=======
+    public AppointmentService(Scanner scanner) {
+        this.doctorRepository = new DoctorRepository();
+        this.scanner = scanner;
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     }
 
     /**

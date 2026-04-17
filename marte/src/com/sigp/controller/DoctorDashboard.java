@@ -12,10 +12,22 @@ import java.util.Scanner;
  */
 public class DoctorDashboard {
 
+<<<<<<< HEAD
     private final Scanner scanner = new Scanner(System.in);
     private final AppointmentService appointmentService = new AppointmentService();
     private final DoctorRepository doctorRepository = new DoctorRepository();
 
+=======
+    private final Scanner scanner;
+    private final AppointmentService appointmentService;
+    private final DoctorRepository doctorRepository = new DoctorRepository();
+
+    public DoctorDashboard(Scanner scanner) {
+        this.scanner = scanner;
+        this.appointmentService = new AppointmentService(scanner);
+    }
+
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     public void showDoctorMenu(User user) {
         System.out.println("\n--- MENÚ DE MÉDICO ---");
 
@@ -44,7 +56,11 @@ public class DoctorDashboard {
                 System.out.println("\n--- BIENVENIDO DR. " + doctor.getNombreCompleto().toUpperCase() + " ---");
                 System.out.println("1. Ver mis citas");
                 System.out.println("2. Completar una cita");
+<<<<<<< HEAD
                 System.out.println("3. Salir");
+=======
+                System.out.println("3. Volver al menú principal");
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                 System.out.print("Selecciona una opción: ");
 
                 String option = scanner.nextLine().trim();
@@ -52,7 +68,11 @@ public class DoctorDashboard {
                     case "1" -> appointmentService.verMisCitasDoctor(doctorId, doctor.getNombreCompleto());
                     case "2" -> appointmentService.completarCita(doctorId);
                     case "3" -> {
+<<<<<<< HEAD
                         System.out.println("Cerrando sesión de médico...");
+=======
+                        System.out.println("Volviendo al menú principal...");
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                         keepRunning = false;
                     }
                     default -> System.out.println("Opción no válida.");

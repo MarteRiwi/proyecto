@@ -1,3 +1,8 @@
 admin|admin123|ADMIN
 juan@gmail.com|1234|PATIENT
 prueba@gmail.com|1234|DOCTOR
+<<<<<<< HEAD
+=======
+stiven12@gmail.com|1234|PATIENT
+carlos123@gmail.com|1234|PATIENT
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)

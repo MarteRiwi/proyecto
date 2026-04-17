@@ -48,7 +48,11 @@ public class AdminController_ACTUALIZADO {
 
                 switch (option) {
                     case 1 -> {
+<<<<<<< HEAD
                         DoctorController doctorController = new DoctorController();
+=======
+                        DoctorController doctorController = new DoctorController(scanner);
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                         doctorController.mostrarMenuDoctores();
                     }
                     case 2 -> listarPacientes();
