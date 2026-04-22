@@ -20,15 +20,9 @@ public class AppointmentService {
     private DoctorRepository doctorRepository;
     private Scanner scanner;
 
-<<<<<<< HEAD
-    public AppointmentService() {
-        this.doctorRepository = new DoctorRepository();
-        this.scanner = new Scanner(System.in);
-=======
     public AppointmentService(Scanner scanner) {
         this.doctorRepository = new DoctorRepository();
         this.scanner = scanner;
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     }
 
     /**
@@ -186,9 +180,9 @@ public class AppointmentService {
                 return;
             }
 
-            Appointment appointmentToCanccel = citasPendientes.get(choice - 1);
-            appointmentToCanccel.cancelar();
-            AppointmentRepository.updateAppointment(appointmentToCanccel);
+            Appointment appointmentToCancel = citasPendientes.get(choice - 1);
+            appointmentToCancel.cancelar();
+            AppointmentRepository.updateAppointment(appointmentToCancel);
 
             System.out.println("\n✓ Cita cancelada exitosamente.");
 
@@ -330,10 +324,7 @@ public class AppointmentService {
      */
     private LocalDateTime parseFechaHora(String dateStr, String timeStr) {
         try {
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
             String combined = dateStr + " " + timeStr;
             return LocalDateTime.parse(combined, dateTimeFormatter);
         } catch (DateTimeParseException e) {

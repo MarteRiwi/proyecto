@@ -3,6 +3,7 @@ package com.sigp.controller;
 import com.sigp.model.User;
 import com.sigp.repository.PatientRepository;
 import com.sigp.service.LoginService;
+import com.sigp.controller.DoctorController;
 import java.util.Scanner;
 
 /**
@@ -18,15 +19,11 @@ import java.util.Scanner;
  */
 public class AdminController {
 
-<<<<<<< HEAD
-    private final Scanner scanner = new Scanner(System.in);
-=======
     private final Scanner scanner;
 
     public AdminController(Scanner scanner) {
         this.scanner = scanner;
     }
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
 
     /** Muestra el menú principal del administrador y ejecuta las opciones. */
     public void showAdminMenu(User admin) {
@@ -43,16 +40,12 @@ public class AdminController {
             System.out.print("Seleccione una opción: ");
 
             try {
-                option = Integer.parseInt(scanner.nextLine());
+                option = Integer.parseInt(scanner.nextLine().trim());
 
                 switch (option) {
                     case 1 -> {
                         // Delega completamente en DoctorController (proyecto Stiven)
-<<<<<<< HEAD
-                        DoctorController doctorController = new DoctorController();
-=======
                         DoctorController doctorController = new DoctorController(scanner);
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                         doctorController.mostrarMenuDoctores();
                     }
                     case 2 -> listarPacientes();
@@ -90,7 +83,7 @@ public class AdminController {
         }
         listarPacientes();
         System.out.print("Ingrese el nombre del paciente a eliminar: ");
-        String name = scanner.nextLine();
+        String name = scanner.nextLine().trim();
         if (PatientRepository.removeByName(name)) {
             System.out.println("Paciente '" + name + "' eliminado correctamente.");
         } else {
@@ -102,9 +95,9 @@ public class AdminController {
 
     private void registrarNuevoUsuario() {
         System.out.print("Email del nuevo usuario: ");
-        String username = scanner.nextLine();
+        String username = scanner.nextLine().trim();
         System.out.print("Contraseña: ");
-        String password = scanner.nextLine();
+        String password = scanner.nextLine().trim();
         System.out.println("Rol del usuario:\n1. PACIENTE\n2. DOCTOR\n3. ADMIN");
         System.out.print("Selecciona el rol: ");
 
