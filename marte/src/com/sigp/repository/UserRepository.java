@@ -1,11 +1,10 @@
 package com.sigp.repository;
 
+import com.sigp.dao.impl.UserDAO;
 import com.sigp.model.User;
-import com.sigp.util.PersistenceManager;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * Repositorio de usuarios del sistema.
@@ -13,24 +12,17 @@ import java.util.Map;
  */
 public class UserRepository {
 
-    private static final List<User> userDatabase = new ArrayList<>();
+    private static final UserDAO userDao = new UserDAO();
 
     static {
-        Map<String, Object> datos = PersistenceManager.cargarUsuarios();
-        List<User> usuariosCargados = (List<User>) datos.get("usuarios");
-        if (usuariosCargados != null) {
-            userDatabase.addAll(usuariosCargados);
-        }
-        if (userDatabase.stream().noneMatch(u -> u.username().equalsIgnoreCase("admin"))) {
-            userDatabase.add(new User("admin", "admin123", "ADMIN"));
-            PersistenceManager.guardarUsuarios(userDatabase);
+        if (userDao.findByUsername("admin").isEmpty()) {
+            userDao.create(new User("admin", "admin123", "ADMIN"));
         }
     }
 
     /** Agrega un nuevo usuario a la base de datos. */
     public static void addUser(User user) {
-        userDatabase.add(user);
-        PersistenceManager.guardarUsuarios(userDatabase);
+        userDao.create(user);
     }
 
     /** Agrega un nuevo usuario con rol determinado. */
@@ -40,16 +32,12 @@ public class UserRepository {
 
     /** Retorna todos los usuarios registrados. */
     public static List<User> getUserDatabase() {
-        return new ArrayList<>(userDatabase);
+        return userDao.findAll();
     }
 
     /** Busca un usuario por email (sin distinguir mayúsculas). */
     public static User findByEmail(String username) {
-        for (User u : userDatabase) {
-            if (u.username().equalsIgnoreCase(username)) {
-                return u;
-            }
-        }
-        return null;
+        Optional<User> user = userDao.findByUsername(username);
+        return user.orElse(null);
     }
 }

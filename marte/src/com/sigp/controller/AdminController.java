@@ -3,7 +3,6 @@ package com.sigp.controller;
 import com.sigp.model.User;
 import com.sigp.repository.PatientRepository;
 import com.sigp.service.LoginService;
-import com.sigp.controller.DoctorController;
 import java.util.Scanner;
 
 /**

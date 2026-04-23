@@ -1,9 +1,7 @@
 package com.sigp.service;
 
 import com.sigp.model.Appointment;
-import com.sigp.model.Doctor;
 import com.sigp.repository.AppointmentRepository;
-import com.sigp.repository.DoctorRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -15,11 +13,9 @@ import java.util.Scanner;
  */
 public class DoctorAppointmentService {
 
-    private DoctorRepository doctorRepository;
     private Scanner scanner;
 
     public DoctorAppointmentService() {
-        this.doctorRepository = new DoctorRepository();
         this.scanner = new Scanner(System.in);
     }
 

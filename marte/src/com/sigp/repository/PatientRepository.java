@@ -1,26 +1,16 @@
 package com.sigp.repository;
 
+import com.sigp.dao.impl.PatientDAO;
 import com.sigp.model.Patient;
-import com.sigp.util.PersistenceManager;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Repositorio de pacientes.
- * Maneja el almacenamiento en memoria de todos los pacientes registrados.
- * Diseño basado en el proyecto de Esteban.
+ * Implementación de acceso a datos sobre PostgreSQL.
  */
 public class PatientRepository {
 
-    private static final List<Patient> patientList = new ArrayList<>();
-
-    static {
-        var datos = PersistenceManager.cargarPacientes();
-        List<Patient> pacientesCargados = (List<Patient>) datos.get("pacientes");
-        if (pacientesCargados != null) {
-            patientList.addAll(pacientesCargados);
-        }
-    }
+    private static final PatientDAO patientDao = new PatientDAO();
 
     /** Agrega un nuevo paciente a la lista. */
     public static void addPatient(Patient patient) {
@@ -30,51 +20,35 @@ public class PatientRepository {
         if (findById(patient.id()) != null) {
             throw new IllegalArgumentException("Ya existe un paciente registrado con esa cédula.");
         }
-        patientList.add(patient);
-        PersistenceManager.guardarPacientes(patientList);
+        patientDao.create(patient);
     }
 
     /** Retorna la lista completa de pacientes. */
     public static List<Patient> getPatientList() {
-        return new ArrayList<>(patientList);
+        return patientDao.findAll();
     }
 
     /** Busca un paciente por nombre (sin distinguir mayúsculas). */
     public static Patient findByName(String name) {
-        for (Patient p : patientList) {
-            if (p.name().equalsIgnoreCase(name)) {
-                return p;
-            }
-        }
-        return null;
+        return patientDao.findByName(name).orElse(null);
     }
 
     /** Busca un paciente por su cédula (ID). */
     public static Patient findById(String id) {
-        for (Patient p : patientList) {
-            if (p.id().equals(id)) {
-                return p;
-            }
-        }
-        return null;
+        return patientDao.findById(id).orElse(null);
     }
 
     /** Busca un paciente por email (sin distinguir mayúsculas). */
     public static Patient findByEmail(String email) {
-        for (Patient p : patientList) {
-            if (p.email().equalsIgnoreCase(email)) {
-                return p;
-            }
-        }
-        return null;
+        return patientDao.findByEmail(email).orElse(null);
     }
 
     /** Elimina un paciente por nombre. Retorna true si fue eliminado. */
     public static boolean removeByName(String name) {
-        boolean removed = patientList.removeIf(p -> p.name().equalsIgnoreCase(name));
-        if (removed) {
-            PersistenceManager.guardarPacientes(patientList);
+        Patient patient = findByName(name);
+        if (patient == null) {
+            return false;
         }
-        return removed;
+        return patientDao.deleteById(patient.id());
     }
 }

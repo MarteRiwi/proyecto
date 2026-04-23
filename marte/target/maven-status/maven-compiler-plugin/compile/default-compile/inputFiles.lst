@@ -3,6 +3,15 @@
 /home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/controller/ControllerExample.java
 /home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/controller/DoctorController.java
 /home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/controller/DoctorDashboard.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/AppointmentDAOInterface.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/DoctorDAOInterface.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/PatientDAOInterface.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/UserDAOInterface.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/impl/AppointmentDAO.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/impl/DoctorDAO.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/impl/PatientDAO.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/dao/impl/UserDAO.java
+/home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/database/DatabaseConfig.java
 /home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/exception/CustomException.java
 /home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/model/Appointment.java
 /home/cohorte6/Escritorio/proyecto/marte/src/com/sigp/model/Doctor.java

@@ -72,6 +72,10 @@ public class DoctorService {
         existente.setEdad(edad);
         existente.setCedula(cedula);
         existente.setEspecialidad(especialidad);
+
+        if (!repository.actualizarDoctor(existente)) {
+            throw new CustomException("No se pudo actualizar el doctor en la base de datos.");
+        }
     }
 
     /** Elimina un doctor buscándolo por su cédula. */
