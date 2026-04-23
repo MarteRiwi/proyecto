@@ -30,3 +30,20 @@ marte/
  ├── diagrams/
  └── README.md
  ```
+## Conexión a PostgreSQL
+El proyecto está configurado para usar PostgreSQL por JDBC en:
+- Host: `localhost`
+- Puerto: `5433`
+- Base de datos: `sigp`
+- Usuario: `postgres`
+
+Puedes sobreescribir esos valores con variables de entorno:
+- `SIGP_DB_URL`
+- `SIGP_DB_HOST`
+- `SIGP_DB_PORT`
+- `SIGP_DB_NAME`
+- `SIGP_DB_USER`
+- `SIGP_DB_PASSWORD`
+
+Ejemplo para ejecutar con variables de entorno:
+`SIGP_DB_HOST=localhost SIGP_DB_PORT=5433 SIGP_DB_NAME=sigp SIGP_DB_USER=postgres SIGP_DB_PASSWORD={{SIGP_DB_PASSWORD}} mvn exec:java`

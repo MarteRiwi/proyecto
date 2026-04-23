@@ -13,11 +13,16 @@ import java.util.Scanner;
 public class LoginService {
 
     public User authenticate(String email, String password) {
-        User user = UserRepository.findByEmail(email);
-        if (user != null && user.password().equals(password)) {
-            return user;
+        try {
+            User user = UserRepository.findByEmail(email);
+            if (user != null && user.password().equals(password)) {
+                return user;
+            }
+            return null;
+        } catch (RuntimeException e) {
+            System.out.println("Error de conexión al validar credenciales. Intenta de nuevo en unos segundos.");
+            return null;
         }
-        return null;
     }
 
     public void registerUser(String email, String password) {
@@ -29,15 +34,27 @@ public class LoginService {
             System.out.println("El email no puede estar vacío.");
             return;
         }
-        if (UserRepository.findByEmail(email) != null) {
-            System.out.println("El email '" + email + "' ya está registrado. Usa otro.");
+
+        // Validar formato y reglas de usuario antes de consultar la base de datos.
+        try {
+            new User(email, password, role);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
             return;
         }
+
         try {
+            if (UserRepository.findByEmail(email) != null) {
+                System.out.println("El email '" + email + "' ya está registrado. Usa otro.");
+                return;
+            }
+
             UserRepository.addUser(email, password, role);
             System.out.println("Usuario con email '" + email + "' registrado exitosamente como " + role + ".");
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("No se pudo registrar el usuario por un problema de conexión con la base de datos.");
         }
     }
 

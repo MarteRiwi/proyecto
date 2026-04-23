@@ -5,18 +5,28 @@ import com.sigp.model.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Repositorio de usuarios del sistema.
  * Incluye un usuario admin precargado por defecto.
  */
 public class UserRepository {
+    private static final Logger LOGGER = Logger.getLogger(UserRepository.class.getName());
 
     private static final UserDAO userDao = new UserDAO();
 
     static {
-        if (userDao.findByUsername("admin").isEmpty()) {
-            userDao.create(new User("admin", "admin123", "ADMIN"));
+        try {
+            if (userDao.findByUsername("admin").isEmpty()) {
+                userDao.create(new User("admin", "admin123", "ADMIN"));
+            }
+        } catch (RuntimeException e) {
+            // Evita romper el arranque si la BD no está disponible en este momento.
+            LOGGER.log(Level.WARNING,
+                    "No fue posible inicializar el usuario admin por defecto. Motivo: {0}",
+                    e.getMessage());
         }
     }
 

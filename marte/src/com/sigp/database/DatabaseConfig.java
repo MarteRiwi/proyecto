@@ -4,266 +4,253 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Configuración centralizada de conexión JDBC PostgreSQL con HikariCP pool.
- * Singleton para todo el sistema. SOLID: SRP (único responsable conexión).
+ * Configuracion centralizada de conexion JDBC PostgreSQL con HikariCP.
+ * Responsabilidad unica: construir y administrar el pool de conexiones.
  */
 public class DatabaseConfig {
-    private static volatile DataSource dataSource;
-    private static volatile boolean schemaInitialized = false;
-    private static final String URL = buildJdbcUrl();
-    private static final String USER = System.getenv().getOrDefault("SIGP_DB_USER", "postgres");
-    private static final String PASSWORD = System.getenv().getOrDefault("SIGP_DB_PASSWORD", "1234");
-    
-    private DatabaseConfig() {} // Private constructor - Singleton
+    private static final Logger LOGGER = Logger.getLogger(DatabaseConfig.class.getName());
+    private static final String DRIVER_CLASS = "org.postgresql.Driver";
+    private static final String CLASSPATH_CONFIG_FILE = "database.properties";
 
-    private static String buildJdbcUrl() {
-        String directUrl = System.getenv("SIGP_DB_URL");
-        if (directUrl != null && !directUrl.isBlank()) {
-            return directUrl;
-        }
-        String host = System.getenv().getOrDefault("SIGP_DB_HOST", "localhost");
-        String port = System.getenv().getOrDefault("SIGP_DB_PORT", "5432");
-        String dbName = System.getenv().getOrDefault("SIGP_DB_NAME", "sigp");
-        return "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
+    private static volatile DataSource dataSource;
+    private static final AppSettings SETTINGS = AppSettings.load();
+
+    private DatabaseConfig() {
     }
-    
+
     /**
      * Inicializa el pool de conexiones lazy-loading.
      */
     public static synchronized DataSource getDataSource() {
         if (dataSource == null) {
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(URL);
-            config.setUsername(USER);
-            config.setPassword(PASSWORD);
-            config.setDriverClassName("org.postgresql.Driver");
-            config.setMaximumPoolSize(20);
-            config.setMinimumIdle(5);
-            config.setConnectionTimeout(30000);
-            config.addDataSourceProperty("cachePrepStmts", "true");
-            config.addDataSourceProperty("prepStmtCacheSize", "250");
-            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            
-            dataSource = new HikariDataSource(config);
-            initializeSchema();
+            DataSource createdDataSource = null;
+            try {
+                createdDataSource = DataSourceFactory.create(SETTINGS.database());
+                validateConnection(createdDataSource, SETTINGS.database());
+                dataSource = createdDataSource;
+                LOGGER.log(Level.INFO, "Pool de conexiones inicializado para {0}", SETTINGS.database().jdbcUrl());
+            } catch (RuntimeException e) {
+                closeDataSource(createdDataSource);
+                throw buildConnectionException(SETTINGS.database(), e);
+            }
         }
         return dataSource;
     }
 
-    private static synchronized void initializeSchema() {
-        if (schemaInitialized) {
-            return;
-        }
-
-        String createUsers = """
-                CREATE TABLE IF NOT EXISTS usuarios (
-                    username VARCHAR(120) PRIMARY KEY,
-                    password VARCHAR(255) NOT NULL,
-                    role VARCHAR(20) NOT NULL
-                )
-                """;
-
-        String createPatients = """
-                CREATE TABLE IF NOT EXISTS pacientes (
-                    id VARCHAR(20) PRIMARY KEY,
-                    name VARCHAR(120) NOT NULL,
-                    nationality VARCHAR(80) NOT NULL,
-                    phone VARCHAR(20) NOT NULL,
-                    email VARCHAR(120) NOT NULL UNIQUE,
-                    age INT NOT NULL
-                )
-                """;
-
-        String createDoctors = """
-                CREATE TABLE IF NOT EXISTS doctores (
-                    id SERIAL PRIMARY KEY,
-                    nombre_completo VARCHAR(120) NOT NULL,
-                    edad INT NOT NULL,
-                    cedula VARCHAR(20) NOT NULL UNIQUE,
-                    especialidad VARCHAR(120) NOT NULL
-                )
-                """;
-
-        String createAppointments = """
-                CREATE TABLE IF NOT EXISTS citas (
-                    id SERIAL PRIMARY KEY,
-                    patient_name VARCHAR(120) NOT NULL,
-                    patient_id VARCHAR(20) NOT NULL,
-                    doctor_id INT NOT NULL,
-                    doctor_name VARCHAR(120) NOT NULL,
-                    doctor_specialty VARCHAR(120) NOT NULL,
-                    appointment_datetime TIMESTAMP NOT NULL,
-                    status VARCHAR(20) NOT NULL,
-                    cost NUMERIC(10,2) NOT NULL DEFAULT 0,
-                    notes TEXT,
-                    CONSTRAINT fk_citas_doctor
-                        FOREIGN KEY (doctor_id) REFERENCES doctores(id)
-                        ON UPDATE CASCADE ON DELETE RESTRICT
-                )
-                """;
-
-        try (Connection connection = getConnection();
-             var statement = connection.createStatement()) {
-            statement.execute(createUsers);
-            statement.execute(createPatients);
-            statement.execute(createDoctors);
-            statement.execute(createAppointments);
-            seedInitialData(connection);
-            schemaInitialized = true;
-        } catch (SQLException e) {
-            throw new RuntimeException("No se pudo inicializar el esquema de PostgreSQL.", e);
-        }
-    }
-
-    private static void seedInitialData(Connection connection) throws SQLException {
-        seedUsers(connection);
-        seedDoctors(connection);
-        seedPatients(connection);
-        seedAppointments(connection);
-    }
-
-    private static void seedUsers(Connection connection) throws SQLException {
-        if (hasRows(connection, "usuarios")) {
-            return;
-        }
-
-        String sql = "INSERT INTO usuarios (username, password, role) VALUES (?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "admin");
-            statement.setString(2, "admin123");
-            statement.setString(3, "ADMIN");
-            statement.addBatch();
-
-            statement.setString(1, "doctor.demo@mail.com");
-            statement.setString(2, "doc1234");
-            statement.setString(3, "DOCTOR");
-            statement.addBatch();
-
-            statement.setString(1, "paciente.demo@mail.com");
-            statement.setString(2, "pac1234");
-            statement.setString(3, "PATIENT");
-            statement.addBatch();
-
-            statement.executeBatch();
-        }
-    }
-
-    private static void seedDoctors(Connection connection) throws SQLException {
-        if (hasRows(connection, "doctores")) {
-            return;
-        }
-
-        String sql = "INSERT INTO doctores (nombre_completo, edad, cedula, especialidad) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "Ana Maria Rojas");
-            statement.setInt(2, 39);
-            statement.setString(3, "1030123456");
-            statement.setString(4, "Medicina General");
-            statement.executeUpdate();
-        }
-    }
-
-    private static void seedPatients(Connection connection) throws SQLException {
-        if (hasRows(connection, "pacientes")) {
-            return;
-        }
-
-        String sql = "INSERT INTO pacientes (id, name, nationality, phone, email, age) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "1002003004");
-            statement.setString(2, "Carlos Ruiz");
-            statement.setString(3, "Colombiana");
-            statement.setString(4, "3001234567");
-            statement.setString(5, "paciente.demo@mail.com");
-            statement.setInt(6, 31);
-            statement.executeUpdate();
-        }
-    }
-
-    private static void seedAppointments(Connection connection) throws SQLException {
-        if (hasRows(connection, "citas")) {
-            return;
-        }
-
-        Integer doctorId = getFirstDoctorId(connection);
-        if (doctorId == null) {
-            return;
-        }
-
-        String sql = """
-                INSERT INTO citas
-                (patient_name, patient_id, doctor_id, doctor_name, doctor_specialty, appointment_datetime, status, cost, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """;
-
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, "Carlos Ruiz");
-            statement.setString(2, "1002003004");
-            statement.setInt(3, doctorId);
-            statement.setString(4, "Ana Maria Rojas");
-            statement.setString(5, "Medicina General");
-            statement.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now().plusDays(1).withSecond(0).withNano(0)));
-            statement.setString(7, "PENDIENTE");
-            statement.setDouble(8, 0.0);
-            statement.setString(9, "Cita creada como dato de prueba");
-            statement.executeUpdate();
-        }
-    }
-
-    private static boolean hasRows(Connection connection, String tableName) throws SQLException {
-        String sql = "SELECT EXISTS (SELECT 1 FROM " + tableName + " LIMIT 1)";
-        try (PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-            if (resultSet.next()) {
-                return resultSet.getBoolean(1);
-            }
-            return false;
-        }
-    }
-
-    private static Integer getFirstDoctorId(Connection connection) throws SQLException {
-        String sql = "SELECT id FROM doctores ORDER BY id LIMIT 1";
-        try (PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-            if (resultSet.next()) {
-                return resultSet.getInt(1);
-            }
-            return null;
-        }
-    }
-    
     /**
-     * Obtiene conexión del pool.
+     * Obtiene conexion del pool.
+     *
      * @return Connection lista para usar
      * @throws SQLException si no puede conectar
      */
     public static Connection getConnection() throws SQLException {
         return getDataSource().getConnection();
     }
-    
+
     /**
-     * Test de conexión.
+     * Test de conexion.
      */
     public static boolean testConnection() {
         try (Connection conn = getConnection()) {
             return conn != null && !conn.isClosed();
         } catch (SQLException e) {
-            System.err.println("Error conexión PostgreSQL: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error al probar conexion PostgreSQL.", e);
             return false;
         }
     }
-    
-    public static void shutdown() {
-        if (dataSource instanceof HikariDataSource) {
-            ((HikariDataSource) dataSource).close();
+
+    public static synchronized void shutdown() {
+        if (dataSource != null) {
+            closeDataSource(dataSource);
+            dataSource = null;
+            DatabaseSchemaManager.reset();
+            LOGGER.log(Level.INFO, "Pool de conexiones cerrado.");
+        }
+    }
+
+    static AppSettings getSettings() {
+        return SETTINGS;
+    }
+
+    private static void validateConnection(DataSource source, DatabaseSettings settings) {
+        try (Connection ignored = source.getConnection()) {
+            // Fail-fast para detectar credenciales/host/puerto incorrectos en el arranque.
+        } catch (SQLException e) {
+            throw buildConnectionException(settings, e);
+        }
+    }
+
+    private static RuntimeException buildConnectionException(DatabaseSettings settings, Throwable cause) {
+        String message = "No se pudo conectar a PostgreSQL (url=" + settings.jdbcUrl()
+                + ", user=" + settings.username() + ")."
+                + " Verifica host, puerto, base de datos y credenciales.";
+        return new RuntimeException(message, cause);
+    }
+
+    private static void closeDataSource(DataSource source) {
+        if (source instanceof HikariDataSource hikariDataSource) {
+            hikariDataSource.close();
+        }
+    }
+
+    private static String firstNonBlank(String... values) {
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                return value.trim();
+            }
+        }
+        return "";
+    }
+
+    static record AppSettings(DatabaseSettings database, SeedSettings seed) {
+        private static AppSettings load() {
+            ConfigResolver resolver = ConfigResolver.load();
+            return new AppSettings(
+                    DatabaseSettings.from(resolver),
+                    SeedSettings.from(resolver)
+            );
+        }
+    }
+
+    static record DatabaseSettings(String jdbcUrl, String username, String password) {
+        private static DatabaseSettings from(ConfigResolver resolver) {
+            String directUrl = resolver.resolve("SIGP_DB_URL", "sigp.db.url", "db.url");
+            String host = resolver.resolveOrDefaultWithFallbackEnv("SIGP_DB_HOST", "POSTGRES_HOST", "sigp.db.host", "db.host", "localhost");
+            String port = resolver.resolveOrDefaultWithFallbackEnv("SIGP_DB_PORT", "POSTGRES_PORT", "sigp.db.port", "db.port", "5432");
+            String dbName = resolver.resolveOrDefaultWithFallbackEnv("SIGP_DB_NAME", "POSTGRES_DB", "sigp.db.name", "db.name", "sigp");
+            String jdbcUrl = directUrl.isBlank() ? "jdbc:postgresql://" + host + ":" + port + "/" + dbName : directUrl;
+
+            String username = resolver.resolveOrDefaultWithFallbackEnv("SIGP_DB_USER", "POSTGRES_USER", "sigp.db.user", "db.user", "postgres");
+            String password = resolver.resolveWithFallbackEnv("SIGP_DB_PASSWORD", "POSTGRES_PASSWORD", "sigp.db.password", "db.password");
+
+            if (password.isBlank()) {
+                LOGGER.log(Level.WARNING, "No se encontro SIGP_DB_PASSWORD/db.password; se usara password vacio.");
+            }
+
+            return new DatabaseSettings(jdbcUrl, username, password);
+        }
+    }
+
+    static record SeedSettings(
+            String adminUsername,
+            String adminPassword,
+            String doctorUsername,
+            String doctorPassword,
+            String patientUsername,
+            String patientPassword
+    ) {
+        private static SeedSettings from(ConfigResolver resolver) {
+            return new SeedSettings(
+                    resolver.resolveOrDefault("SIGP_SEED_ADMIN_USER", "sigp.seed.admin.user", "seed.admin.user", "admin"),
+                    resolver.resolve("SIGP_SEED_ADMIN_PASSWORD", "sigp.seed.admin.password", "seed.admin.password"),
+                    resolver.resolveOrDefault("SIGP_SEED_DOCTOR_USER", "sigp.seed.doctor.user", "seed.doctor.user", "doctor.demo@mail.com"),
+                    resolver.resolve("SIGP_SEED_DOCTOR_PASSWORD", "sigp.seed.doctor.password", "seed.doctor.password"),
+                    resolver.resolveOrDefault("SIGP_SEED_PATIENT_USER", "sigp.seed.patient.user", "seed.patient.user", "paciente.demo@mail.com"),
+                    resolver.resolve("SIGP_SEED_PATIENT_PASSWORD", "sigp.seed.patient.password", "seed.patient.password")
+            );
+        }
+
+        boolean hasMissingPasswords() {
+            return adminPassword.isBlank() || doctorPassword.isBlank() || patientPassword.isBlank();
+        }
+    }
+
+    private static final class ConfigResolver {
+        private final Properties properties;
+
+        private ConfigResolver(Properties properties) {
+            this.properties = properties;
+        }
+
+        private static ConfigResolver load() {
+            Properties loaded = new Properties();
+            loadClasspathProperties(loaded);
+            loadExternalProperties(loaded);
+            return new ConfigResolver(loaded);
+        }
+
+        private String resolve(String envKey, String systemPropertyKey, String propertiesKey) {
+            return firstNonBlank(
+                    System.getenv(envKey),
+                    System.getProperty(systemPropertyKey),
+                    properties.getProperty(propertiesKey)
+            );
+        }
+
+        private String resolveWithFallbackEnv(String envKey, String fallbackEnvKey, String systemPropertyKey, String propertiesKey) {
+            return firstNonBlank(
+                    System.getenv(envKey),
+                    System.getenv(fallbackEnvKey),
+                    System.getProperty(systemPropertyKey),
+                    properties.getProperty(propertiesKey)
+            );
+        }
+
+        private String resolveOrDefault(String envKey, String systemPropertyKey, String propertiesKey, String defaultValue) {
+            String value = resolve(envKey, systemPropertyKey, propertiesKey);
+            return value.isBlank() ? defaultValue : value;
+        }
+
+        private String resolveOrDefaultWithFallbackEnv(String envKey, String fallbackEnvKey, String systemPropertyKey, String propertiesKey, String defaultValue) {
+            String value = resolveWithFallbackEnv(envKey, fallbackEnvKey, systemPropertyKey, propertiesKey);
+            return value.isBlank() ? defaultValue : value;
+        }
+
+        private static void loadClasspathProperties(Properties target) {
+            try (InputStream inputStream = DatabaseConfig.class.getClassLoader().getResourceAsStream(CLASSPATH_CONFIG_FILE)) {
+                if (inputStream != null) {
+                    target.load(inputStream);
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "No se pudo cargar {0} desde classpath.", CLASSPATH_CONFIG_FILE);
+                LOGGER.log(Level.FINE, "Detalle de error de carga de classpath", e);
+            }
+        }
+
+        private static void loadExternalProperties(Properties target) {
+            String externalPath = firstNonBlank(
+                    System.getenv("SIGP_DB_CONFIG_FILE"),
+                    System.getProperty("sigp.db.config.file")
+            );
+
+            if (externalPath.isBlank()) {
+                return;
+            }
+
+            try (InputStream inputStream = Files.newInputStream(Path.of(externalPath))) {
+                target.load(inputStream);
+                LOGGER.log(Level.INFO, "Configuracion externa cargada desde {0}", externalPath);
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "No se pudo cargar el archivo de configuracion externa: " + externalPath, e);
+            }
+        }
+    }
+
+    private static final class DataSourceFactory {
+        private static DataSource create(DatabaseSettings settings) {
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(settings.jdbcUrl());
+            config.setUsername(settings.username());
+            config.setPassword(settings.password());
+            config.setDriverClassName(DRIVER_CLASS);
+            config.setMaximumPoolSize(20);
+            config.setMinimumIdle(5);
+            config.setConnectionTimeout(30000);
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+            return new HikariDataSource(config);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.sigp;
 
+import com.sigp.database.DatabaseSchemaManager;
 import com.sigp.model.User;
 import com.sigp.service.LoginService;
 import java.util.Scanner;
@@ -21,6 +22,13 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         LoginService loginService = new LoginService();
         boolean running = true;
+
+        try {
+            DatabaseSchemaManager.initializeIfNeeded();
+        } catch (RuntimeException e) {
+            System.out.println("No se pudo validar/inicializar el esquema de base de datos al arrancar.");
+            System.out.println("Detalle: " + e.getMessage());
+        }
 
         System.out.println("******************************************");
         System.out.println("*       SISTEMA HOSPITALARIO MARTE      *");
@@ -67,6 +75,9 @@ public class Main {
 
             } catch (NumberFormatException e) {
                 System.out.println("Por favor ingresa un número válido.");
+            } catch (RuntimeException e) {
+                System.out.println("Se produjo un error inesperado y la operación no pudo completarse.");
+                System.out.println("Detalle: " + e.getMessage());
             }
         }
 
