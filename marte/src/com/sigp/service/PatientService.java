@@ -1,7 +1,8 @@
-package com.sigp.service;
+package marte.src.com.sigp.service;
 
-import com.sigp.model.Patient;
-import com.sigp.repository.PatientRepository;
+import marte.src.com.sigp.model.Patient;
+import marte.src.com.sigp.repository.PatientRepository;
+
 import java.util.Scanner;
 
 /**
@@ -12,46 +13,22 @@ import java.util.Scanner;
  */
 public class PatientService {
 
-<<<<<<< HEAD
-=======
     private final Scanner scanner;
 
     public PatientService(Scanner scanner) {
         this.scanner = scanner;
     }
 
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     /**
      * Solicita los datos del paciente por consola y lo registra en el sistema.
      *
      * @param loginEmail email con el que inició sesión
      */
     public void registrarInformacionPaciente(String loginEmail) {
-<<<<<<< HEAD
-        Scanner sc = new Scanner(System.in);
-
-=======
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
         System.out.println("\n--- REGISTRO DE PACIENTE: " + loginEmail.toUpperCase() + " ---");
 
         try {
             System.out.print("Nombre completo: ");
-<<<<<<< HEAD
-            String name = sc.nextLine();
-
-            
-            System.out.print("Nacionalidad: ");
-            String nationality = sc.nextLine();
-
-            System.out.print("Teléfono celular (ej: 3001234567): ");
-            String phone = sc.nextLine();
-
-            System.out.print("Edad: ");
-            int age = Integer.parseInt(sc.nextLine().trim());
-
-            System.out.print("Número de cédula: ");
-            String id = sc.nextLine();
-=======
             String name = scanner.nextLine();
 
             
@@ -66,7 +43,6 @@ public class PatientService {
 
             System.out.print("Número de cédula: ");
             String id = scanner.nextLine();
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
 
             guardarPaciente(name, nationality, phone, loginEmail, age, id);
 
@@ -78,8 +54,6 @@ public class PatientService {
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Si el paciente ya existe, muestra su ficha y entra al menú de citas.
      */
     public boolean gestionarPacienteExistente(String loginEmail) {
@@ -95,7 +69,6 @@ public class PatientService {
     }
 
     /**
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
      * Crea y persiste el paciente, luego muestra su ficha y el menú de citas.
      */
     private void guardarPaciente(String name, String nationality, String phone,
@@ -113,8 +86,6 @@ public class PatientService {
     /** Muestra en pantalla todos los datos del paciente recién registrado. */
     public static void mostrarFichaPaciente(String name) {
         Patient found = PatientRepository.findByName(name);
-<<<<<<< HEAD
-=======
         imprimirFichaPaciente(found);
     }
 
@@ -125,7 +96,6 @@ public class PatientService {
     }
 
     private static void imprimirFichaPaciente(Patient found) {
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
         if (found != null) {
             System.out.println("\n========================================");
             System.out.println(" " + found.name() + " registrado como paciente.");
@@ -144,29 +114,10 @@ public class PatientService {
 
     /** Menú que aparece justo después de completar el registro del paciente. */
     private void mostrarMenuPostRegistro(String name) {
-<<<<<<< HEAD
-        Scanner sc = new Scanner(System.in);
-=======
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
         boolean inMenu = true;
         while (inMenu) {
             System.out.println("¿Qué deseas hacer ahora?");
             System.out.println("1. Ir al menú de citas");
-<<<<<<< HEAD
-            System.out.println("2. Salir del sistema");
-            System.out.print("Selecciona una opción: ");
-            try {
-                int opt = Integer.parseInt(sc.nextLine().trim());
-                switch (opt) {
-                    case 1 -> {
-                        mostrarMenuCitas(name);
-                        inMenu = false;
-                    }
-                    case 2 -> {
-                        System.out.println("\nGracias por usar el sistema Marte. ¡Hasta pronto, " + name + "!");
-                        inMenu = false;
-                        System.exit(0);
-=======
             System.out.println("2. Volver al menú principal");
             System.out.print("Selecciona una opción: ");
             try {
@@ -178,7 +129,6 @@ public class PatientService {
                     case 2 -> {
                         System.out.println("\nVolviendo al menú principal...");
                         inMenu = false;
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                     }
                     default -> System.out.println("Opción no válida. Ingresa 1 o 2.");
                 }
@@ -190,19 +140,11 @@ public class PatientService {
 
     /** Menú de gestión de citas médicas. */
     private void mostrarMenuCitas(String name) {
-<<<<<<< HEAD
-        Scanner sc = new Scanner(System.in);
-=======
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
         // Obtener la cédula del paciente para poder agendar citas
         Patient paciente = PatientRepository.findByName(name);
         String patientId = paciente != null ? paciente.id() : "";
         
-<<<<<<< HEAD
-        AppointmentService appointmentService = new AppointmentService();
-=======
         AppointmentService appointmentService = new AppointmentService(scanner);
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
         boolean inMenu = true;
         
         while (inMenu) {
@@ -213,31 +155,18 @@ public class PatientService {
             System.out.println("2. Ver mis citas");
             System.out.println("3. Ver historial de citas");
             System.out.println("4. Cancelar una cita");
-<<<<<<< HEAD
-            System.out.println("5. Salir");
-            System.out.print("Selecciona una opción: ");
-            try {
-                int opt = Integer.parseInt(sc.nextLine().trim());
-=======
             System.out.println("5. Volver al menú principal");
             System.out.print("Selecciona una opción: ");
             try {
                 int opt = Integer.parseInt(scanner.nextLine().trim());
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                 switch (opt) {
                     case 1 -> appointmentService.agendarCita(name, patientId);
                     case 2 -> appointmentService.verMisCitas(name);
                     case 3 -> appointmentService.verHistorialCitas(name);
                     case 4 -> appointmentService.cancelarCita(name);
                     case 5 -> {
-<<<<<<< HEAD
-                        System.out.println("\nSaliendo. ¡Hasta pronto, " + name + "!");
-                        inMenu = false;
-                        System.exit(0);
-=======
                         System.out.println("\nVolviendo al menú principal...");
                         inMenu = false;
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                     }
                     default -> System.out.println("Opción no válida.");
                 }

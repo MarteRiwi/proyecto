@@ -1,4 +1,4 @@
-package com.sigp.repository;
+package marte.src.com.sigp.repository;
 
 public class RepositoryExample {
     public void getData() {

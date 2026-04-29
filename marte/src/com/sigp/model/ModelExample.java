@@ -1,4 +1,4 @@
-package com.sigp.model;
+package marte.src.com.sigp.model;
 
 public class ModelExample {
     private String name;

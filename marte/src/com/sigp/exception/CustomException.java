@@ -1,4 +1,4 @@
-package com.sigp.exception;
+package marte.src.com.sigp.exception;
 
 /**
  * Excepción personalizada usada en toda la aplicación

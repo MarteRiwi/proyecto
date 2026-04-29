@@ -1,9 +1,9 @@
-package com.sigp.service;
+package marte.src.com.sigp.service;
 
-import com.sigp.model.Appointment;
-import com.sigp.model.Doctor;
-import com.sigp.repository.AppointmentRepository;
-import com.sigp.repository.DoctorRepository;
+import marte.src.com.sigp.model.Appointment;
+import marte.src.com.sigp.model.Doctor;
+import marte.src.com.sigp.repository.AppointmentRepository;
+import marte.src.com.sigp.repository.DoctorRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -20,15 +20,9 @@ public class AppointmentService {
     private DoctorRepository doctorRepository;
     private Scanner scanner;
 
-<<<<<<< HEAD
-    public AppointmentService() {
-        this.doctorRepository = new DoctorRepository();
-        this.scanner = new Scanner(System.in);
-=======
     public AppointmentService(Scanner scanner) {
         this.doctorRepository = new DoctorRepository();
         this.scanner = scanner;
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
     }
 
     /**

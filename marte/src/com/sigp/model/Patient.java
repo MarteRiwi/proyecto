@@ -1,4 +1,4 @@
-package com.sigp.model;
+package marte.src.com.sigp.model;
 
 /**
  * Modelo de paciente del sistema hospitalario Marte.

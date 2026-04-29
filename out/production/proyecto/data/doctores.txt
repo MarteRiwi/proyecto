@@ -1,0 +1,18 @@
+<<<<<<< HEAD
+2
+1|Stiven|33|1037390621|Pediatria
+=======
+4
+1|Carlos Joaquin|44|21882134|Cirugia
+2|Mauricio Coco|55|5612314|Ortopedia
+3|Esteban Marin|43|12452243|Neumologia
+4|Julián Restrepo|38|71554321|Cardiología
+5|Andrés Henao|41|10203040|Dermatología
+6|Felipe Garcés|32|98765432|Pediatría
+7|Santiago Meza|47|43210987|Gastroenterología
+8|Mateo Salazar|50|11223344|Neurología
+9|Camilo Rojas|36|55667788|Oftalmología
+10|Daniel Vargas|29|99887766|Urología
+11|Samuel Ospina|52|33445566|Psiquiatría
+12|Lucas Jiménez|45|77889900|Oncología
+>>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)

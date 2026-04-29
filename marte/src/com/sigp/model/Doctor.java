@@ -1,4 +1,4 @@
-package com.sigp.model;
+package marte.src.com.sigp.model;
 
 /**
  * Modelo Doctor con ID autoincremental (asignado por el repositorio),

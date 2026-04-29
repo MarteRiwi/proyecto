@@ -1,4 +1,4 @@
-package com.sigp.model;
+package marte.src.com.sigp.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

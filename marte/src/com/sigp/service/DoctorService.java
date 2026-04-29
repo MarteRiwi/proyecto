@@ -1,8 +1,8 @@
-package com.sigp.service;
+package marte.src.com.sigp.service;
 
-import com.sigp.exception.CustomException;
-import com.sigp.model.Doctor;
-import com.sigp.repository.DoctorRepository;
+import marte.src.com.sigp.exception.CustomException;
+import marte.src.com.sigp.model.Doctor;
+import marte.src.com.sigp.repository.DoctorRepository;
 import java.util.List;
 
 /**

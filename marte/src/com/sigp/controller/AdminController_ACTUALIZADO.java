@@ -1,10 +1,10 @@
-package com.sigp.controller;
+package marte.src.com.sigp.controller;
 
-import com.sigp.model.User;
-import com.sigp.repository.DoctorRepository;
-import com.sigp.repository.PatientRepository;
-import com.sigp.service.DoctorAppointmentService;
-import com.sigp.service.LoginService;
+import marte.src.com.sigp.model.User;
+import marte.src.com.sigp.repository.DoctorRepository;
+import marte.src.com.sigp.repository.PatientRepository;
+import marte.src.com.sigp.service.DoctorAppointmentService;
+import marte.src.com.sigp.service.LoginService;
 
 import java.util.Scanner;
 
@@ -48,11 +48,7 @@ public class AdminController_ACTUALIZADO {
 
                 switch (option) {
                     case 1 -> {
-<<<<<<< HEAD
-                        DoctorController doctorController = new DoctorController();
-=======
                         DoctorController doctorController = new DoctorController(scanner);
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                         doctorController.mostrarMenuDoctores();
                     }
                     case 2 -> listarPacientes();

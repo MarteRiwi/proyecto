@@ -1,4 +1,4 @@
-package com.sigp.model;
+package marte.src.com.sigp.model;
 
 /**
  * Modelo de usuario del sistema (admin, doctor o paciente).

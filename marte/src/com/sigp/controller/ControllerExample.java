@@ -1,6 +1,6 @@
-package com.sigp.controller;
+package marte.src.com.sigp.controller;
 
-import com.sigp.service.ServiceExample;
+import marte.src.com.sigp.service.ServiceExample;
 
 public class ControllerExample {
     public void run() {

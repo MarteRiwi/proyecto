@@ -1,7 +1,7 @@
-package com.sigp;
+package marte.src.com.sigp;
 
-import com.sigp.model.User;
-import com.sigp.service.LoginService;
+import marte.src.com.sigp.model.User;
+import marte.src.com.sigp.service.LoginService;
 import java.util.Scanner;
 
 /**
@@ -46,11 +46,7 @@ public class Main {
                         User loggedUser = loginService.authenticate(userStr, passStr);
                         if (loggedUser != null) {
                             System.out.println("\nAcceso concedido.");
-<<<<<<< HEAD
-                            loginService.handleLoginSuccess(loggedUser);
-=======
                             loginService.handleLoginSuccess(loggedUser, scanner);
->>>>>>> 477a5e3 (Feat: Cambios en el menu rol paciente salida y gestion)
                         } else {
                             System.out.println("\nError: credenciales incorrectas.");
                         }

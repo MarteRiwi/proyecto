@@ -1,6 +1,6 @@
-package com.sigp.service;
+package marte.src.com.sigp.service;
 
-import com.sigp.repository.RepositoryExample;
+import marte.src.com.sigp.repository.RepositoryExample;
 
 public class ServiceExample {
     public void performService() {

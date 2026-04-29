@@ -1,7 +1,7 @@
-package com.sigp.repository;
+package marte.src.com.sigp.repository;
 
-import com.sigp.model.Appointment;
-import com.sigp.util.PersistenceManager;
+import marte.src.com.sigp.model.Appointment;
+import marte.src.com.sigp.util.PersistenceManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

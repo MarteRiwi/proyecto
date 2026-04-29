@@ -1,0 +1,14 @@
+# Java build artifacts
+*.class
+
+# Project build output
+/marte/out/
+/marte/out_clean/
+
+# Editor-specific files
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+
+# Accidental local files
+/p.name().equalsIgnoreCase(name))
